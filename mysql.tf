@@ -1,29 +1,29 @@
-# Provisions Elastic Cache Cluster : mysql
-resource "aws_elasticache_cluster" "mysql" {
-  cluster_id           = "roboshop-${var.ENV}-mysql"
+# Provisions RDS : MySQL
+
+resource "aws_db_instance" "mysql" {
+  allocated_storage    = 10
   engine               = "mysql"
-  node_type            = "cache.m4.large"   
-  num_cache_nodes      = 1
-  parameter_group_name = aws_elasticache_parameter_group.mysql_pg.name
-  engine_version       = "6.2"
-  port                 = 6379
-  subnet_group_name    = aws_elasticache_subnet_group.mysql_subnet_group.name
-  security_group_ids   = [aws_security_group.allows_mysql.id]
+  engine_version       = "5.7"
+  instance_class       = "db.t3.micro"
+  username             = "admin1"
+  password             = "RoboShop@1"
+  parameter_group_name = ?
+  skip_final_snapshot  = true
+  db_subnet_group_name    = aws_db_subnet_group.mysql_subnet_group.name
+  vpc_security_group_ids  = [aws_security_group.allows_mysql.id]
 }
-
-# Creates Parameter Group needed for Elastic Cache
-resource "aws_elasticache_parameter_group" "mysql_pg" {
-  name   = "roboshop-${var.ENV}-mysql-pg"
-  family = "mysql6.x"
-}
-
 
 # creates subnet group 
-resource "aws_elasticache_subnet_group" "mysql_subnet_group" {
+resource "aws_db_subnet_group" "mysql_subnet_group" {
   name       = "roboshop-mysql-${var.ENV}-subnetgroup"
   subnet_ids = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET_IDS
 
   tags = {
     Name = "roboshop-mysql-${var.ENV}-subnetgroup"
   }
+}
+
+resource "aws_db_parameter_group" "mysql_pg" {
+  name   = "roboshop-${var.ENV}-mysql-pg"
+  family = "mysql5.7"
 }
