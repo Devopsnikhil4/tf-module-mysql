@@ -1,12 +1,12 @@
 # Provisions RDS : MySQL
 
 resource "aws_db_instance" "mysql" {
-  allocated_storage    = 10
+  allocated_storage    = var.MYSQL_STORAGE
   engine               = "mysql"
-  engine_version       = "5.7"
-  instance_class       = "db.t3.micro"
-  username             = "admin1"
-  password             = "RoboShop1"
+  engine_version       = var.MYSQL_ENGINE_VERSION
+  instance_class       = var.MYSQL_INSTANCE_TYPE
+  username             = local.MYSQL_USER
+  password             = local.MYSQL_PASS
   parameter_group_name = aws_db_parameter_group.mysql_pg.name
   skip_final_snapshot  = true
   db_subnet_group_name    = aws_db_subnet_group.mysql_subnet_group.name
